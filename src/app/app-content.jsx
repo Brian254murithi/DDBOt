@@ -34,7 +34,7 @@ import '../components/bot-notification/bot-notification.scss';
 
 const AppContent = observer(() => {
     const [is_api_initialized, setIsApiInitialized] = React.useState(false);
-    const [is_loading, setIsLoading] = React.useState(true);
+    const [is_loading, setIsLoading] = React.useState(false);
     const [is_eu_error_loading, setIsEuErrorLoading] = React.useState(true);
     const [offline_timeout, setOfflineTimeout] = React.useState(null);
     const store = useStore();
@@ -46,6 +46,7 @@ const AppContent = observer(() => {
     const { recovered_transactions, recoverPendingContracts } = transactions;
     const is_subscribed_to_msg_listener = React.useRef(false);
     const msg_listener = React.useRef(null);
+    const fallback_fired = React.useRef(false);
     const { connectionStatus } = useApiBase();
     const { initTrackJS } = useTrackjs();
 
@@ -81,6 +82,20 @@ const AppContent = observer(() => {
             common.setSocketOpened(false);
         }
     }, [common, connectionStatus, offline_timeout]);
+
+    // Fallback: if WebSocket never reaches OPENED within 3s, unblock the app anyway
+    useEffect(() => {
+        const fallbackTimer = setTimeout(() => {
+            if (!fallback_fired.current) {
+                fallback_fired.current = true;
+                console.log('[Fallback] WebSocket did not open in time, initializing dashboard anyway');
+                setIsApiInitialized(true);
+                setIsLoading(false);
+            }
+        }, 1000);
+        return () => clearTimeout(fallbackTimer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Handle offline scenarios - don't wait indefinitely for API
     useEffect(() => {
@@ -239,14 +254,13 @@ const AppContent = observer(() => {
                     console.log('[Timeout] Active symbols loading timeout, showing dashboard');
                     setIsLoading(false);
                 }
-            }, 10000); // 10 second timeout
+            }, 4000); // 4 second timeout
         }
     };
 
     React.useEffect(() => {
         if (is_api_initialized) {
             init();
-            setIsLoading(true);
             if (!client.is_logged_in) {
                 changeActiveSymbolLoadingState();
             }
@@ -275,7 +289,7 @@ const AppContent = observer(() => {
     const getLoadingMessage = () => {
         if (is_eu_error_loading) return '';
         if (!isOnline) return localize('Loading offline dashboard...');
-        return localize('Initializing Deriv Bot account...');
+        return localize('Initializing BrianDev AI Nexus Pro...');
     };
 
     // Skip loading entirely when offline - show dashboard directly

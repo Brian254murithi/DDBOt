@@ -8,11 +8,14 @@ import {
     LegacyReportsIcon as ReportsLogo,
 } from '@deriv/quill-icons/Legacy';
 import {
-    DerivProductBrandLightDerivBotLogoWordmarkIcon as DerivBotLogo,
     DerivProductBrandLightDerivTraderLogoWordmarkIcon as DerivTraderLogo,
     PartnersProductBrandLightSmarttraderLogoWordmarkIcon as SmarttraderLogo,
 } from '@deriv/quill-icons/Logo';
 import { localize } from '@deriv-com/translations';
+
+const BrianDevLogo = ({ height = 32 }: { height?: number }) => (
+    <img src='/briandev-logo.png' alt='BrianDev AI Nexus Pro' style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }} />
+);
 
 export type PlatformsConfig = {
     active: boolean;
@@ -53,10 +56,10 @@ export const platformsConfig: PlatformsConfig[] = [
     },
     {
         active: true,
-        buttonIcon: <DerivBotLogo height={25} width={94} />,
+        buttonIcon: <BrianDevLogo height={25} />,
         description: localize('Automated trading at your fingertips. No coding needed.'),
         href: standalone_routes.bot,
-        icon: <DerivBotLogo height={32} width={121} />,
+        icon: <BrianDevLogo height={32} />,
         showInEU: false,
     },
     {

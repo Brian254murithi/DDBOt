@@ -1,12 +1,13 @@
-import { standalone_routes } from '@/components/shared';
-import { DerivLogo, useDevice } from '@deriv-com/ui';
 import './app-logo.scss';
 
 export const AppLogo = () => {
-    const { isDesktop } = useDevice();
-
-    if (!isDesktop) return null;
     return (
-        <DerivLogo className='app-header__logo' href={standalone_routes.deriv_com} target='_blank' variant='wallets' />
+        <a className='app-header__logo' href='/' aria-label='BrianDev AI Nexus Pro'>
+            <img
+                src='/briandev-logo.png'
+                alt='BrianDev AI Nexus Pro'
+                style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
+            />
+        </a>
     );
 };

@@ -30,6 +30,10 @@ const Layout = observer(() => {
         [tmb_enabled_from_hook]
     );
 
+    const derivDomains = ['deriv.com', 'deriv.dev', 'binary.sx', 'pages.dev', 'localhost', 'deriv.be', 'deriv.me'];
+    const currentDomain = window.location.hostname.split('.').slice(-2).join('.');
+    const isDerivDomain = derivDomains.includes(currentDomain);
+
     const isLoggedInCookie = Cookies.get('logged_state') === 'true';
     const isEndpointPage = window.location.pathname.includes('endpoint');
     const checkClientAccount = JSON.parse(localStorage.getItem('clientAccounts') ?? '{}');
@@ -139,8 +143,9 @@ const Layout = observer(() => {
 
         const checkOIDCEnabledWithMissingAccount = !isEndpointPage && !isCallbackPage && !clientHasCurrency;
         const shouldAuthenticate =
-            (isLoggedInCookie && !isClientAccountsPopulated && !isEndpointPage && !isCallbackPage) ||
-            checkOIDCEnabledWithMissingAccount;
+            isDerivDomain &&
+            ((isLoggedInCookie && !isClientAccountsPopulated && !isEndpointPage && !isCallbackPage) ||
+                checkOIDCEnabledWithMissingAccount);
 
         // Skip authentication when offline
         if (!isOnline) {
